@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Risk Reporter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏘️ Community Risk Intelligence System</h1>
+            <p>Report local issues to help your community stay safe</p>
+        </header>
+
+        <form id="reportForm">
+            <div class="form-group">
+                <label for="location">📍 Location (Area/Ward)</label>
+                <input type="text" id="location" name="location" required 
+                       placeholder="e.g., Ward 12, Gandhi Nagar">
+            </div>
+
+            <div class="form-group">
+                <label for="category">🏷️ Issue Category</label>
+                <select id="category" name="category" required>
+                    <option value="">-- Select Category --</option>
+                    <option value="Health">Health (fever outbreak, clinic shortage)</option>
+                    <option value="Environment">Environment (pollution, waste, water quality)</option>
+                    <option value="Safety">Safety (damaged roads, lighting, crime)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="severity">⚠️ Severity Level</label>
+                <select id="severity" name="severity" required>
+                    <option value="">-- Select Severity --</option>
+                    <option value="Low">Low - Minor inconvenience</option>
+                    <option value="Medium">Medium - Needs attention soon</option>
+                    <option value="High">High - Urgent action required</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="reporterType">👤 Reporter Type</label>
+                <select id="reporterType" name="reporterType" required>
+                    <option value="">-- Select Type --</option>
+                    <option value="Citizen">Citizen</option>
+                    <option value="Volunteer">NGO Volunteer</option>
+                    <option value="Worker">NGO Worker</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="description">📝 Issue Description</label>
+                <textarea id="description" name="description" rows="5" required
+                          placeholder="Describe the issue in detail. What did you observe? When did it start? How many people are affected?"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="image">📷 Upload Photo (Optional)</label>
+                <input type="file" id="image" name="image" accept="image/*">
+                <small>Max 5MB • JPG, PNG only</small>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Report</button>
+        </form>
+
+        <div id="successMessage" class="success-message" style="display:none;">
+            ✅ Report submitted successfully! Thank you for helping your community.
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
