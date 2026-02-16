@@ -4,14 +4,14 @@ const API_URL = 'https://community-risk-api-e2affkacd6b0djc5.eastasia-01.azurewe
 document.getElementById('reportForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    // Get form values
+    // Get form values with backend-compatible field names
     const formData = {
+        date_reported: new Date().toISOString(),  // Changed from 'timestamp'
         location: document.getElementById('location').value,
         category: document.getElementById('category').value,
         severity: document.getElementById('severity').value,
-        reporterType: document.getElementById('reporterType').value,
-        description: document.getElementById('description').value,
-        timestamp: new Date().toISOString()
+        reporter_type: document.getElementById('reporterType').value,  // Changed from 'reporterType'
+        description: document.getElementById('description').value
     };
     
     // Show loading state
@@ -30,11 +30,12 @@ document.getElementById('reportForm').addEventListener('submit', async function(
             body: JSON.stringify(formData)
         });
         
+        const result = await response.json();
+        
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(result.error || `HTTP error! status: ${response.status}`);
         }
         
-        const result = await response.json();
         console.log('Report submitted successfully:', result);
         
         // Show success message
