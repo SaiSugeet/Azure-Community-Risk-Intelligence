@@ -1,4 +1,7 @@
-document.getElementById('reportForm').addEventListener('submit', function(e) {
+// Azure Function API endpoint
+const API_URL = 'https://community-risk-api-e2affkacd6b0djc5.eastasia-01.azurewebsites.net/api/ingestReport';
+
+document.getElementById('reportForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
     // Get form values
@@ -11,19 +14,48 @@ document.getElementById('reportForm').addEventListener('submit', function(e) {
         timestamp: new Date().toISOString()
     };
     
-    // Log to console (later this will send to Azure)
-    console.log('Report Submitted:', formData);
+    // Show loading state
+    const submitButton = document.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+    submitButton.textContent = 'Submitting...';
+    submitButton.disabled = true;
     
-    // Show success message
-    document.getElementById('successMessage').style.display = 'block';
-    
-    // Clear form
-    document.getElementById('reportForm').reset();
-    
-    // Hide success message after 5 seconds
-    setTimeout(function() {
-        document.getElementById('successMessage').style.display = 'none';
-    }, 5000);
+    try {
+        // Send data to Azure Function
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log('Report submitted successfully:', result);
+        
+        // Show success message
+        document.getElementById('successMessage').style.display = 'block';
+        
+        // Clear form
+        document.getElementById('reportForm').reset();
+        
+        // Hide success message after 5 seconds
+        setTimeout(function() {
+            document.getElementById('successMessage').style.display = 'none';
+        }, 5000);
+        
+    } catch (error) {
+        console.error('Error submitting report:', error);
+        alert('Error submitting report. Please try again. Error: ' + error.message);
+    } finally {
+        // Reset button state
+        submitButton.textContent = originalButtonText;
+        submitButton.disabled = false;
+    }
 });
 
 // File size validation
