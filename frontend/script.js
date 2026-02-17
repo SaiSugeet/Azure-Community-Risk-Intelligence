@@ -6,13 +6,24 @@ document.getElementById('reportForm').addEventListener('submit', async function(
     
     // Get form values with backend-compatible field names
     const formData = {
-        date_reported: new Date().toISOString(),  // Changed from 'timestamp'
-        location: document.getElementById('location').value,
-        category: document.getElementById('category').value,
-        severity: document.getElementById('severity').value,
-        reporter_type: document.getElementById('reporterType').value,  // Changed from 'reporterType'
-        description: document.getElementById('description').value
+        date_reported: new Date().toISOString(),
+        location: document.getElementById('location').value.trim(),
+        category: document.getElementById('category').value.trim(),
+        severity: document.getElementById('severity').value.trim(),
+        reporter_type: document.getElementById('reporterType').value.trim(),
+        description: document.getElementById('description').value.trim()
     };
+
+    // DEBUG: Log what we're sending
+    console.log('Sending data:', JSON.stringify(formData));
+
+    // Frontend validation
+    if (!formData.location || !formData.category || 
+        !formData.severity || !formData.reporter_type || 
+        !formData.description) {
+        alert('Please fill in all required fields!');
+        return;
+    }
     
     // Show loading state
     const submitButton = document.querySelector('button[type="submit"]');
@@ -21,7 +32,6 @@ document.getElementById('reportForm').addEventListener('submit', async function(
     submitButton.disabled = true;
     
     try {
-        // Send data to Azure Function
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -30,10 +40,16 @@ document.getElementById('reportForm').addEventListener('submit', async function(
             body: JSON.stringify(formData)
         });
         
-        const result = await response.json();
+        // Get raw response for debugging
+        const responseText = await response.text();
+        console.log('Raw response:', responseText);
+        
+        // Parse JSON
+        const result = JSON.parse(responseText);
         
         if (!response.ok) {
-            throw new Error(result.error || `HTTP error! status: ${response.status}`);
+            throw new Error(result.error || result.details || 
+                          `HTTP error! status: ${response.status}`);
         }
         
         console.log('Report submitted successfully:', result);
@@ -50,10 +66,9 @@ document.getElementById('reportForm').addEventListener('submit', async function(
         }, 5000);
         
     } catch (error) {
-        console.error('Error submitting report:', error);
-        alert('Error submitting report. Please try again. Error: ' + error.message);
+        console.error('Full error details:', error);
+        alert('Error submitting report: ' + error.message);
     } finally {
-        // Reset button state
         submitButton.textContent = originalButtonText;
         submitButton.disabled = false;
     }
